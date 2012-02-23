@@ -32,8 +32,8 @@
 }
 
 #pragma mark CHANGE GO BUTTON STATE
--(void)changeGoButtonState:(BOOL)t_bool{
-    if (t_bool) {
+-(void)changeGoButtonState:(BOOL)isActive{
+    if (isActive) {
         [goButton setImage:[UIImage imageNamed:@"go_active"] forState:UIControlStateNormal];
     }else{
         [goButton setImage:[UIImage imageNamed:@"go_inactive"] forState:UIControlStateNormal];
@@ -53,10 +53,10 @@
     }
     
 }
--(void)animateView:(UITextField*)currenttxtField resignResonder:(BOOL)r_bool{
+-(void)animateView:(UITextField*)currenttxtField resignResonder:(BOOL)shouldResign{
     
     if ([currenttxtField isEqual:emailIDTextfield]) {// email textfield
-        if (r_bool){
+        if (shouldResign){
             [passwordTextfield becomeFirstResponder];
             if (self.view.frame.origin.y == 0) {
                 [self callForUIAnimationOfView:ANIMATE_DISTANCE];
@@ -70,7 +70,7 @@
         }  
         
     }else{// password textfield
-        if (r_bool) {
+        if (shouldResign) {
             [emailIDTextfield becomeFirstResponder];
             if (self.view.frame.origin.y == ANIMATE_DISTANCE) {
                 [self callForUIAnimationOfView:0.0];
@@ -286,7 +286,7 @@
 	} else {
 		message = nil;
 	}
-	KZURLRequest *login_request = [[[KZURLRequest alloc] initRequestWithString:url_str andParams:params delegate:self headers:_headers andLoadingMessage:message] autorelease];
+	[[[KZURLRequest alloc] initRequestWithString:url_str andParams:params delegate:self headers:_headers andLoadingMessage:message] autorelease];
 	[_headers release];
 	[KZUserInfo shared].email = _email;
 	[KZUserInfo shared].password = _password;

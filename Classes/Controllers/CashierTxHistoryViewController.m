@@ -99,6 +99,19 @@
     return 3;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == 2) {
+        return 90.0;
+    }
+    return 79.0;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 58;
+}
+
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -118,11 +131,11 @@
     }
     if (indexPath.row == 2) {
 
-        cell.frame                  =   CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, 90.0);
+        cell.cellBgImgView.frame    =   CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, 90.0);
         cell.cellBgImgView.image    =   [UIImage imageNamed:@"records_cell_bg1"];
     
     }else{
-        cell.frame                  =   CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, 79.0);
+        cell.cellBgImgView.frame    =   CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, 79.0);
         cell.cellBgImgView.image    =   [UIImage imageNamed:@"records_cell_bg"];
         
     }
@@ -172,18 +185,7 @@
 
 */
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row == 2) {
-        return 90.0;
-    }
-    return 79.0;
-}
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 58;
-}
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
@@ -196,10 +198,7 @@
     NSDateFormatter* formatter          =   [[NSDateFormatter alloc] init];
     [formatter setDateFormat:@"dd-MM-yyyy"];
     NSString *dateString                 =   [formatter stringFromDate:section_date];
-    
-    
-    
-    
+ 
     switch (section) {
         case 0:
             titleString         =   [NSString stringWithFormat:@"Today %@", dateString];
@@ -228,7 +227,7 @@
 
 
 
-
+#pragma mark Open Menu
 - (IBAction) openCloseMenu {
 	CGRect current_position = self.view_menu.frame;
 	if (is_menu_open) {	// then close
@@ -239,25 +238,26 @@
 	is_menu_open = !is_menu_open;
 	[self.view_cover setHidden:NO];
 	[self.view_cover setOpaque:NO];
-	[UIView animateWithDuration:0.5 
-					 animations:^(void){
-						 if (is_menu_open) {
-							 [self.view_cover setAlpha:0.8];
-						 } else {
-							 [self.view_cover setAlpha:0.0];
-						 }
-						 self.view_menu.frame = current_position;
-					 } 
-					 completion:^(BOOL finished){	
-						 if (is_menu_open) {
-							 [self.lbl_title setHighlighted:YES];
-							 [self.img_menu_arrow setHighlighted:YES];
-						 } else {
-							 [self.lbl_title setHighlighted:NO];
-							 [self.img_menu_arrow setHighlighted:NO];
-						 }
-					 }
-	 ];
+	[UIView animateWithDuration:0.5 animations:^(void){
+        
+         if (is_menu_open) {
+             [self.view_cover setAlpha:0.8];
+         } else {
+             [self.view_cover setAlpha:0.0];
+         }
+         self.view_menu.frame = current_position;
+    } 
+    completion:^(BOOL finished){	
+        
+         if (is_menu_open) {
+             [self.lbl_title setHighlighted:YES];
+             [self.img_menu_arrow setHighlighted:YES];
+         } else {
+             [self.lbl_title setHighlighted:NO];
+             [self.img_menu_arrow setHighlighted:NO];
+         }
+    }
+    ];
 	
 }
 

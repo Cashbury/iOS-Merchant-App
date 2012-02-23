@@ -94,7 +94,7 @@
 
 - (IBAction) showTransactionHistory {
 	[self openCloseMenu];
-	[KZReceiptHistory getCashierReceipts:self andDaysCount:7];
+	//[KZReceiptHistory getCashierReceipts:self andDaysCount:7];
 }
 
 
@@ -128,7 +128,6 @@
 
 - (IBAction) keyBoardAction:(id)sender {
 	int tag = [((UIButton*)sender) tag];
-	NSRange r;
 	if (tag >= 0 && tag <= 9) {
 		[self keyTouched:[NSString stringWithFormat:@"%d", tag]];
 	} else if (tag == 10) {	// Magnify
@@ -388,6 +387,7 @@
     /* to delete */
     /* For testing , once the format is correct, delete this */
     NSString *QRcodeString  =   [NSString stringWithFormat:@"c$::%@ t:15%%",_code];
+    _code                   =   QRcodeString;
     /* delete till here */
     
     if ([_code hasPrefix:CASHBURY_SCAN_QRCODE_IDENTIFICATION]) {// QR code is correct
@@ -396,11 +396,22 @@
         [zxing_vc release];
         current_camera_screen_num   =   0;
         float amount                =   [[str substringWithRange:NSMakeRange(1, [str length]-1)] floatValue];
-        NSArray *tipsArray          =   [QRcodeString componentsSeparatedByString:@"t:"];
+        
+        /* get QRcode and tip seperately*/
+        
+        //get c$:: seperated
+        NSArray *codeArray          =  [_code componentsSeparatedByString:CASHBURY_SCAN_QRCODE_IDENTIFICATION];
+        
+        //get code and tip
+        NSString *codeTipString     =   [codeArray objectAtIndex:0];
+        NSArray *tipsArray          =   [codeTipString componentsSeparatedByString:@"t:"];
         NSString *tipsString        =   @"";
-        if ([tipsArray count] >= 2) {
-            // There is tips added
-            tipsString              =   (NSString*)[tipsArray objectAtIndex:1];
+        NSString *codeString        =   @"";
+        if ([tipsArray count] > 0) {
+            codeString              =   [(NSString*)[tipsArray objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if ([tipsArray count] > 1) {
+                tipsString          =   (NSString*)[tipsArray objectAtIndex:1];
+            }
         }
         
         
@@ -408,7 +419,7 @@
         [params appendFormat:@"auth_token=%@", [KZUserInfo shared].auth_token];
         [params appendFormat:@"&amount=%1.2f", amount];
         [params appendFormat:@"$tip=%@", tipsString];
-        [params appendFormat:@"&customer_identifier=%@", _code];
+        [params appendFormat:@"&customer_identifier=%@", codeString];
         [params appendFormat:@"&long=%@", [LocationHelper getLongitude]];
         [params appendFormat:@"&lat=%@", [LocationHelper getLatitude]];
         
@@ -464,12 +475,10 @@
 
 - (void) KZURLRequest:(KZURLRequest *)theRequest didSucceedWithData:(NSData*)theData {
 	@try {	
-		NSString* str = [[[NSString alloc] initWithData:theData encoding:NSUTF8StringEncoding] autorelease];
-
-		CXMLDocument *_document = [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
-		CXMLElement* _node  = [_document nodeForXPath:@"/hash" error:nil];
+		CXMLDocument *_document     =   [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
+		CXMLElement* _node          =   (CXMLElement*)[_document nodeForXPath:@"/hash" error:nil];
 		if ([_node stringFromChildNamed:@"currency-symbol"] == nil) {
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"Sorry an error has occurred. Invalid QR Code. Please try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+			UIAlertView *alert      =   [[UIAlertView alloc] initWithTitle:@"Sorry" message:@"Sorry an error has occurred. Invalid QR Code. Please try again later." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			[alert show];
 			[alert release];
 		} else {
@@ -516,24 +525,24 @@
 }
 
 
-- (void)userDidCancelPaymentViewController:(CardIOPaymentViewController *)paymentViewController {
+- (void)userDidCancelPaymentViewController:(CardIOPaymentViewController *)pViewController {
 	NSLog(@"User canceled payment info");
 	// Handle user cancellation.
 	// Dismiss the paymentViewController
 	current_camera_screen_num = 0;
 	[self.btn_scan_toggle setSelected:NO];
 	[[UIApplication sharedApplication] setStatusBarHidden:NO];
-	[paymentViewController dismissModalViewControllerAnimated:NO];
+	[pViewController dismissModalViewControllerAnimated:NO];
 }
 
-- (void)userDidProvideCreditCardInfo:(CardIOCreditCardInfo *)info inPaymentViewController:(CardIOPaymentViewController *)paymentViewController {
+- (void)userDidProvideCreditCardInfo:(CardIOCreditCardInfo *)info inPaymentViewController:(CardIOPaymentViewController *)pViewController {
 	NSLog(@"Got payment info. Number: %@, expiry: %02i/%i, cvv: %@.", info.cardNumber, info.expiryMonth, info.expiryYear, info.cvv);
 	// Process the payment using your merchant account and payment gateway.
 	// Dismiss the paymentViewController
 	current_camera_screen_num = 0;
 	[self.btn_scan_toggle setSelected:NO];
 	[[UIApplication sharedApplication] setStatusBarHidden:NO];
-	[paymentViewController dismissModalViewControllerAnimated:NO];
+	[pViewController dismissModalViewControllerAnimated:NO];
 }
 
 @end
