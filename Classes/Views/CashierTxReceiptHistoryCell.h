@@ -8,14 +8,21 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CashierTxReceiptHistoryCell : UITableViewCell
+@interface CashierTxReceiptHistoryCell : UITableViewCell{
+    
 
-@property (nonatomic, retain) IBOutlet UILabel *date;
-@property (nonatomic, retain) IBOutlet UILabel *name;
-@property (nonatomic, retain) IBOutlet UILabel *amount;
-@property (nonatomic, retain) IBOutlet UIButton *refundButton;
-@property (nonatomic, retain) IBOutlet UIImageView *icon;
+    IBOutlet UILabel *timeLabel;
+    IBOutlet UILabel *customerNameLabel;
+    IBOutlet UIImageView *statusImgView;
+    IBOutlet UIButton *refundButton;
+    IBOutlet UILabel *amountLabel;
+    IBOutlet UILabel *tipsAmountLabel;
+    IBOutlet UILabel *refundedLabel;
+    IBOutlet UILabel *refundedByLabel;
+}
+@property (retain, nonatomic) IBOutlet UIImageView *cellBgImgView;
 
-@property (nonatomic, retain) NSDictionary *receipt;
+- (IBAction)refundButtonClicked:(id)sender;
+
 
 @end

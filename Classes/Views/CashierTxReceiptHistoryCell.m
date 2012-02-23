@@ -9,30 +9,22 @@
 #import "CashierTxReceiptHistoryCell.h"
 
 @implementation CashierTxReceiptHistoryCell
+@synthesize cellBgImgView;
 
-@synthesize date, name, amount, refundButton, icon;
-@synthesize receipt;
 
-- (void) setReceipt:(NSDictionary *)theReceipt
-{
-    self.icon.image = [UIImage imageNamed:@"icon-gained.png"];
-    
-    self.date.text = (NSString *) [theReceipt objectForKey:@"date_time"];
-    self.name.text = (NSString *) [theReceipt objectForKey:@"customer_name"];
-    self.amount.text = (NSString *) [theReceipt objectForKey:@"spend_money"];
-}
 
-- (void) dealloc
-{
-    [date release];
-    [name release];
-    [amount release];
+- (void)dealloc {
+    [timeLabel release];
+    [customerNameLabel release];
+    [statusImgView release];
     [refundButton release];
-    [icon release];
-    
-    [receipt release];
-    
+    [amountLabel release];
+    [tipsAmountLabel release];
+    [refundedLabel release];
+    [refundedByLabel release];
+    [cellBgImgView release];
     [super dealloc];
 }
-
+- (IBAction)refundButtonClicked:(id)sender {
+}
 @end

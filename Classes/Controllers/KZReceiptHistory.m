@@ -41,25 +41,24 @@ static KZReceiptHistory* shared = nil;
 
 - (void) KZURLRequest:(KZURLRequest *)theRequest didSucceedWithData:(NSData*)theData {
 	@try {	
-		CXMLDocument *_document = [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
-		NSLog([_document description]);
+		CXMLDocument *_document     =   [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
 		if (theRequest.identifier == CASHIER_REQUEST) {
-			NSArray* _nodes = [_document nodesForXPath:@"/cashier_receipts/day" error:nil];
+			NSArray* _nodes         =   [_document nodesForXPath:@"/cashier_receipts/day" error:nil];
 			
 			//////////////TODO cashier receit history
-			NSMutableArray* days = [[[NSMutableArray alloc] init] autorelease];		//<> 0
+			NSMutableArray* days    =   [[[NSMutableArray alloc] init] autorelease];		//<> 0
 			
 			for (CXMLElement* _day in _nodes) { 
 //				if ([[_day nodesForXPath:@"receipts/receipt" error:nil] count] > 0) { 
-					NSMutableDictionary* day_info = [[NSMutableDictionary alloc] init];		//< 1
-					NSDateFormatter *df = [[NSDateFormatter alloc] init];
+					NSMutableDictionary* day_info   =   [[NSMutableDictionary alloc] init];		//< 1
+					NSDateFormatter *df             =   [[NSDateFormatter alloc] init];
 					[df setDateFormat:@"yyyy-MM-dd"];
 					[day_info setObject:[df dateFromString:[[_day stringFromChildNamed:@"date"] stringByReplacingOccurrencesOfString:@"'" withString:@""]] forKey:@"date"];
 					[df release];
-					NSMutableArray* _receipts = [[NSMutableArray alloc] init];		//<2
-					NSArray* _day_receipts_nodes = [_day nodesForXPath:@"./receipts/receipt" error:nil];
+					NSMutableArray* _receipts           =   [[NSMutableArray alloc] init];		//<2
+					NSArray* _day_receipts_nodes        =   [_day nodesForXPath:@"./receipts/receipt" error:nil];
 					for (CXMLElement* _receipt_node in _day_receipts_nodes) {
-						NSMutableDictionary* _receipt = [[NSMutableDictionary alloc] init];	//<3
+						NSMutableDictionary* _receipt   =   [[NSMutableDictionary alloc] init];	//<3
 						
 						[_receipt setObject:[_receipt_node stringFromChildNamed:@"current_balance"] forKey:@"current_balance"];
 						[_receipt setObject:[_receipt_node stringFromChildNamed:@"earned_points"] forKey:@"earned_points"];
@@ -79,10 +78,10 @@ static KZReceiptHistory* shared = nil;
 						
 						
 						// get engagements
-						NSArray* _engs_nodes = [_receipt_node nodesForXPath:@"./engagements/engagement" error:nil];
-						NSMutableArray* _engs = [[NSMutableArray alloc] init];		//<4
+						NSArray* _engs_nodes            =   [_receipt_node nodesForXPath:@"./engagements/engagement" error:nil];
+						NSMutableArray* _engs           =   [[NSMutableArray alloc] init];		//<4
 						for (CXMLElement* _eng_node in _engs_nodes) {
-							NSMutableDictionary* _eng = [[NSMutableDictionary alloc] init];		//<5
+							NSMutableDictionary* _eng   =   [[NSMutableDictionary alloc] init];		//<5
 							[_eng setObject:[_eng_node stringFromChildNamed:@"current_balance"] forKey:@"current_balance"];
 							[_eng setObject:[_eng_node stringFromChildNamed:@"amount"] forKey:@"amount"];
 							[_eng setObject:[_eng_node stringFromChildNamed:@"campaign_id"] forKey:@"campaign_id"];
@@ -106,15 +105,14 @@ static KZReceiptHistory* shared = nil;
 			[self.delegate gotCashierReceipts:days];
 			
 		} else if (theRequest.identifier == CUSTOMER_REQUEST) {
-			NSArray* _nodes = [_document nodesForXPath:@"/customer_receipts/receipt" error:nil];
+			NSArray* _nodes             =   [_document nodesForXPath:@"/customer_receipts/receipt" error:nil];
 			
 			//////////////TODO cashier receit history
-			NSMutableArray* receipts = [[[NSMutableArray alloc] init] autorelease];		//<> 0
+			NSMutableArray* receipts    =   [[[NSMutableArray alloc] init] autorelease];		//<> 0
 			
 
 			for (CXMLElement* _receipt_node in _nodes) {
-				NSLog(@"Loop....");
-				NSMutableDictionary* _receipt = [[NSMutableDictionary alloc] init];	//<1
+				NSMutableDictionary* _receipt   =   [[NSMutableDictionary alloc] init];	//<1
 				
 				[_receipt setObject:[_receipt_node stringFromChildNamed:@"current_balance"] forKey:@"current_balance"];
 				[_receipt setObject:[_receipt_node stringFromChildNamed:@"earned_points"] forKey:@"earned_points"];
@@ -129,12 +127,12 @@ static KZReceiptHistory* shared = nil;
 				[_receipt setObject:[_receipt_node stringFromChildNamed:@"currency_symbol"] forKey:@"currency_symbol"];
 				[_receipt setObject:[_receipt_node stringFromChildNamed:@"brand_image_fb"] forKey:@"brand_image_fb"];
 				
-				
+
 				// get engagements
-				NSArray* _engs_nodes = [_receipt_node nodesForXPath:@"./engagements/engagement" error:nil];
-				NSMutableArray* _engs = [[NSMutableArray alloc] init];		//<2
+				NSArray* _engs_nodes            =   [_receipt_node nodesForXPath:@"./engagements/engagement" error:nil];
+				NSMutableArray* _engs           =   [[NSMutableArray alloc] init];		//<2
 				for (CXMLElement* _eng_node in _engs_nodes) {
-					NSMutableDictionary* _eng = [[NSMutableDictionary alloc] init];		//<3
+					NSMutableDictionary* _eng   =   [[NSMutableDictionary alloc] init];		//<3
 					[_eng setObject:[_eng_node stringFromChildNamed:@"current_balance"] forKey:@"current_balance"];
 					[_eng setObject:[_eng_node stringFromChildNamed:@"amount"] forKey:@"amount"];
 					[_eng setObject:[_eng_node stringFromChildNamed:@"title"] forKey:@"title"];

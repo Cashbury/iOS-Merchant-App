@@ -23,6 +23,8 @@
 
 @synthesize lbl_title, view_menu, view_cover, img_menu_arrow, btn_ring_up, btn_receipts, btn_load_up;
 
+#pragma mark Header View
+
 + (CashierTxHistoryHeaderView *) headerViewWithTitle:(NSString *)theTitle description:(NSString *)theDescription
 {
     CashierTxHistoryHeaderView *_header = [[NSBundle mainBundle] loadObjectFromNibNamed:@"CashierTxHistoryHeaderView"
@@ -36,6 +38,7 @@
     return _header;
 }
 
+#pragma InitWith
 - (id) initWithDaysArray:(NSMutableArray*)_days {
 	if (self = [self initWithNibName:@"CashierTxHistoryView" bundle:nil]) {
 		days_array = [_days retain];
@@ -81,36 +84,6 @@
     self.btn_load_up = nil;
 }
 
-
-/*
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-*/
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
-/*
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-}
-*/
-/*
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-}
-*/
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
-
-
 #pragma mark -
 #pragma mark Table view data source
 
@@ -122,120 +95,62 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-	
-    NSInteger _receiptCount = [((NSMutableArray*)[((NSMutableDictionary*)[days_array objectAtIndex:section]) objectForKey:@"receipts"]) count];
-    
-    // Add one more row for the footer
-    return _receiptCount + 1;
+
+    return 3;
 }
 
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger _receiptCount = [((NSMutableArray*)[((NSMutableDictionary*)[days_array objectAtIndex:indexPath.section]) objectForKey:@"receipts"]) count];
+
     
     NSString *_cellIdentifier = @"Cell";
     
-    if (indexPath.row == _receiptCount)
-    {
-        _cellIdentifier = @"FooterCell";
-        
-        UITableViewCell *_cell = [tableView dequeueReusableCellWithIdentifier:_cellIdentifier];
-        
-        if (_cell == nil)
-        {
-            _cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:_cellIdentifier];
-            _cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            
-            _cell.bounds = CGRectMake(0, 0, tableView.frame.size.width, 10);
-            
-            UIImageView *_footer = [[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 10)] autorelease];
-            
-            _footer.image = [UIImage imageNamed:@"day_end.png"];
-            
-            [_cell addSubview:_footer];
-        }
-        
-        return _cell;
-    }
-    else
-    {
-        CashierTxReceiptHistoryCell *cell = (CashierTxReceiptHistoryCell *) [tableView dequeueReusableCellWithIdentifier:_cellIdentifier];
-        
-        if (cell == nil)
-        {
-            cell = [[NSBundle mainBundle] loadObjectFromNibNamed:@"CashierTxReceiptHistoryCell" class:[CashierTxReceiptHistoryCell class] owner:nil options:nil];
-        }
-        
-        // Configure the cell...
-        NSDictionary* receipt = [((NSArray*)[((NSDictionary*)[days_array objectAtIndex:indexPath.section]) objectForKey:@"receipts"]) objectAtIndex:indexPath.row];
-        
-        cell.receipt = receipt;
-        
-        return cell;
-    }
-}
 
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    CashierTxReceiptHistoryCell *cell = (CashierTxReceiptHistoryCell *) [tableView dequeueReusableCellWithIdentifier:_cellIdentifier];
     
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+    if (cell == nil)
+    {
+        cell = [[NSBundle mainBundle] loadObjectFromNibNamed:@"CashierTxReceiptHistoryCell" class:[CashierTxReceiptHistoryCell class] owner:nil options:nil];
+        
+    }
+    if (indexPath.row == 2) {
+
+        cell.frame                  =   CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, 90.0);
+        cell.cellBgImgView.image    =   [UIImage imageNamed:@"records_cell_bg1"];
+    
+    }else{
+        cell.frame                  =   CGRectMake(cell.frame.origin.x, cell.frame.origin.y, cell.frame.size.width, 79.0);
+        cell.cellBgImgView.image    =   [UIImage imageNamed:@"records_cell_bg"];
+        
+    }
+
+    
+    return cell;
+
 }
-*/
-
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 
 #pragma mark -
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	NSDictionary* section_day = (NSDictionary*)[days_array objectAtIndex:indexPath.section];
-	NSArray* receipts = (NSArray*)[section_day objectForKey:@"receipts"];
-	NSDictionary* receipt = (NSDictionary*)[receipts objectAtIndex:indexPath.row];
-	KZCashierSpendReceiptViewController* rec = 
-	[[KZCashierSpendReceiptViewController alloc] initWithBusiness:[KZUserInfo shared].cashier_business 
-														   amount:[receipt objectForKey:@"spend_money"]
-												  currency_symbol:[receipt objectForKey:@"currency_symbol"]
-													customer_name:[receipt objectForKey:@"customer_name"] 
-													customer_type:[receipt objectForKey:@"customer_type"] 
-											   customer_image_url:[receipt objectForKey:@"customer_image_url"]
-												   transaction_id:[receipt objectForKey:@"transaction_id"]];
-	[self presentModalViewController:rec animated:YES];
-	[rec release];
-
+	NSDictionary* section_day   =   (NSDictionary*)[days_array objectAtIndex:indexPath.section];
+	NSArray* receipts           =   (NSArray*)[section_day objectForKey:@"receipts"];
+    if ([receipts count] >0) {
+        NSDictionary* receipt       =   (NSDictionary*)[receipts objectAtIndex:indexPath.row];
+        
+        KZCashierSpendReceiptViewController* rec = 
+        [[KZCashierSpendReceiptViewController alloc] initWithBusiness:[KZUserInfo shared].cashier_business 
+                                                               amount:[receipt objectForKey:@"spend_money"]
+                                                      currency_symbol:[receipt objectForKey:@"currency_symbol"]
+                                                        customer_name:[receipt objectForKey:@"customer_name"] 
+                                                        customer_type:[receipt objectForKey:@"customer_type"] 
+                                                   customer_image_url:[receipt objectForKey:@"customer_image_url"]
+                                                       transaction_id:[receipt objectForKey:@"transaction_id"]];
+        [self presentModalViewController:rec animated:YES];
+        [rec release];
+    }
 }
 
 
@@ -258,9 +173,10 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger _receiptCount = [((NSMutableArray*)[((NSMutableDictionary*)[days_array objectAtIndex:indexPath.section]) objectForKey:@"receipts"]) count];
-    
-    return (indexPath.row == _receiptCount) ? 10 : 75;
+    if (indexPath.row == 2) {
+        return 90.0;
+    }
+    return 79.0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -270,34 +186,38 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    NSDictionary* section_day = (NSDictionary*)[days_array objectAtIndex:section];
-	NSArray* receipts = (NSArray*)[section_day objectForKey:@"receipts"];
-	NSUInteger count = [receipts count];
-	float sum = [self getDayReceiptsSum:receipts];
-    NSString *_sumString = [NSString stringWithFormat:@"%0.0lf %@", sum, [KZUserInfo shared].currency_code];
     
-    NSString *_titleLabel = nil;
+    NSDictionary *sectionDay            =   (NSDictionary*)[days_array objectAtIndex:section];
+    NSArray *receiptsArray              =   (NSArray*)[sectionDay objectForKey:@"receipts"];
+    NSString *sumString                 =   [NSString stringWithFormat:@"%0.0lf %@", [self getDayReceiptsSum:receiptsArray], [KZUserInfo shared].currency_code];
+    NSString *titleString               =   @"";
+    NSDate* section_date                =   [sectionDay objectForKey:@"date"];
+    NSDateFormatter* formatter          =   [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"dd-MM-yyyy"];
+    NSString *dateString                 =   [formatter stringFromDate:section_date];
     
-    if (section == 0)
-    {
-        _titleLabel = [NSString stringWithFormat:@"Today, %@", _sumString];
+    
+    
+    
+    switch (section) {
+        case 0:
+            titleString         =   [NSString stringWithFormat:@"Today %@", dateString];
+            break;
+        case 1:
+            titleString         =   [NSString stringWithFormat:@"Yesterday %@", dateString];
+            break;
+            
+        default:{
+            
+            [formatter setDateFormat:@"EEEE"];
+            titleString                     =   [NSString stringWithFormat:@"%@ %@", [formatter stringFromDate:section_date], dateString];
+            
+        }
+            break;
     }
-    else if (section == 1)
-    {
-        _titleLabel = [NSString stringWithFormat:@"Yesterday, %@", _sumString];
-    }
-    else
-    {
-        NSDate* section_date = [section_day objectForKey:@"date"];
-        NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
-        [formatter setDateFormat:@"EEEE"];
-        
-        _titleLabel = [NSString stringWithFormat:@"%@, %@", [formatter stringFromDate:section_date], _sumString];
-    }
+
     
-    NSString *_description = [NSString stringWithFormat:@"%d receipts", count];
-    
-    return [CashierTxHistoryViewController headerViewWithTitle:_titleLabel description:_description];
+    return [CashierTxHistoryViewController headerViewWithTitle:titleString description:sumString];
 }
 
 - (void)dealloc {

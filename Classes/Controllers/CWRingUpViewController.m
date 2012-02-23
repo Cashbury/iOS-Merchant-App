@@ -473,12 +473,12 @@
 	}
 }
 
-- (IBAction) goBackToSettings:(id)sender {
+- (IBAction) goBackToSettings:(id)sender {/*
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationDuration:0.5];
 	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:self.view.superview cache:NO];	
 	[self.view removeFromSuperview];
-	[UIView commitAnimations];
+	[UIView commitAnimations];*/
 }
 
 - (IBAction) scan_toggle {
