@@ -142,7 +142,7 @@
 		CXMLElement *_node = [_document nodeForXPath:@"//user" error:nil];
 		NSString *email = [_node stringFromChildNamed:@"email"];
 		[self dismissModalViewControllerAnimated:YES];
-		[KZApplication getAppDelegate].loginViewController.txtEmail.text = email;
+		[KZApplication getAppDelegate].loginViewController.emailIDTextfield.text = email;
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"An email has been sent to you to activate your account so that you will be able to use it for login." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 		[alert show];
 		[alert release];

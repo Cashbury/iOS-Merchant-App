@@ -13,27 +13,29 @@
 #import "CXMLElement+Helpers.h"
 #import "TouchXML.h"
 #import "KZUtils.h"
+#import "CWRingUpViewController.h"
 
 @class Facebook;
 
 @interface LoginViewController : UIViewController <
 FaceBookWrapperSessionDelegate,
-KZURLRequestDelegate>{
-	IBOutlet UITextField *txtEmail;
-	IBOutlet UITextField *txtPassword;
+KZURLRequestDelegate,UITextFieldDelegate>{
+
 	IBOutlet FBLoginBtn *fbButton;
-	IBOutlet UILabel *label;
+    IBOutlet UITextField *emailIDTextfield;
+    IBOutlet UITextField *passwordTextfield;
+    IBOutlet UIButton *goButton;
 }
+- (IBAction)clickGoButton:(id)sender;
 
 - (IBAction) hideKeyboard;
-- (IBAction) loginAction;
 - (IBAction) forgot_password;
 - (IBAction) signup;
 - (IBAction) facebook_connect;
 
-@property (nonatomic, retain) IBOutlet UITextField *txtEmail;
-@property (nonatomic, retain) IBOutlet UITextField *txtPassword;
-@property (nonatomic, retain) IBOutlet UILabel *label;
+@property (nonatomic, retain) IBOutlet UITextField *emailIDTextfield;
+@property (nonatomic, retain) IBOutlet UITextField *passwordTextfield;
+
 @property (nonatomic, retain) IBOutlet FBLoginBtn *fbButton;
 
 - (void) loginWithEmail:(NSString*)_email andPassword:(NSString*)_password andUsername:(NSString*)_username andFirstName:(NSString*)_first_name andLastName:(NSString*)_last_name andShowLoading:(BOOL)_show_loading;

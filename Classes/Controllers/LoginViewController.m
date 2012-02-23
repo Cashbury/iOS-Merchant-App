@@ -5,7 +5,7 @@
 //  Created by Ahmed Magdy on 3/6/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
-
+#define ANIMATE_DISTANCE    -30
 #import "LoginViewController.h"
 #import "FBConnect.h"
 #import "KZApplication.h"
@@ -21,10 +21,8 @@
 
 @class KZUtils;
 
-
-@synthesize txtEmail, txtPassword;
-@synthesize label;
 @synthesize fbButton;
+@synthesize emailIDTextfield,passwordTextfield;
 
 
 
@@ -33,34 +31,161 @@
 	// Release anything that's not essential, such as cached data
 }
 
+#pragma mark CHANGE GO BUTTON STATE
+-(void)changeGoButtonState:(BOOL)t_bool{
+    if (t_bool) {
+        [goButton setImage:[UIImage imageNamed:@"go_active"] forState:UIControlStateNormal];
+    }else{
+        [goButton setImage:[UIImage imageNamed:@"go_inactive"] forState:UIControlStateNormal];
+    }
+}
+
+#pragma mark ANIMATE VIEW
+
+-(void)callForUIAnimationOfView:(NSInteger)getDist{
+    
+    if (self.view.frame.origin.y == 0) {
+        [UIView animateWithDuration:0.3 delay:0.0 options:(UIViewAnimationCurveEaseInOut | UIViewAnimationOptionAllowUserInteraction) animations:^{
+            
+            self.view.frame     =   CGRectMake(self.view.frame.origin.x, getDist, self.view.frame.size.width, self.view.frame.size.height);
+        } completion:^(BOOL finished) {
+        }];
+    }
+    
+}
+-(void)animateView:(UITextField*)currenttxtField resignResonder:(BOOL)r_bool{
+    
+    if ([currenttxtField isEqual:emailIDTextfield]) {// email textfield
+        if (r_bool){
+            [passwordTextfield becomeFirstResponder];
+            if (self.view.frame.origin.y == 0) {
+                [self callForUIAnimationOfView:ANIMATE_DISTANCE];
+            }
+        }else{
+            //animate only if self.view.frame.origin.y is 0
+            
+            if (self.view.frame.origin.y == ANIMATE_DISTANCE) {
+                [self callForUIAnimationOfView:0];
+            }
+        }  
+        
+    }else{// password textfield
+        if (r_bool) {
+            [emailIDTextfield becomeFirstResponder];
+            if (self.view.frame.origin.y == ANIMATE_DISTANCE) {
+                [self callForUIAnimationOfView:0.0];
+            }
+        }else{
+            //animate only if self.view.frame.origin.y is -20
+            if (self.view.frame.origin.y == 0) {
+                [self callForUIAnimationOfView:ANIMATE_DISTANCE];
+            } 
+        }
+    }
+}
+
+#pragma mark TEXTFIELD DELEGATES
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
-	[self hideKeyboard];
+	//[self hideKeyboard];
+    
+    [self animateView:textField resignResonder:TRUE];
 	return YES;
 }
 
-- (IBAction) hideKeyboard {
-	[txtEmail resignFirstResponder];
-	[txtPassword resignFirstResponder];
+-(BOOL) textFieldShouldBeginEditing:(UITextField *)textField{
+    
+    [self animateView:textField resignResonder:FALSE];
+    
+    return  TRUE;
 }
 
-- (IBAction) loginAction{
-	[self hideKeyboard];
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    
+    if ([string length]>0) {
+        if ([textField isEqual:emailIDTextfield]) {
+            if ([[passwordTextfield.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] > 0) {
+                //active
+                [self changeGoButtonState:TRUE];
+            }else{
+                //inactive
+                [self changeGoButtonState:FALSE];
+            }
+  
+        }else{
+            if ([[emailIDTextfield.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] > 0) {
+                //active
+                [self changeGoButtonState:TRUE];
+            }else{
+                //inactive
+                [self changeGoButtonState:FALSE];
+            }
+        }
+    }else{
+        
+        if(range.length == 1 && range.location == 0)
+            [self changeGoButtonState:FALSE];
+        else
+            [self changeGoButtonState:TRUE];
+    }
+    return true;
+}
+
+#pragma mark INPUT VALID
+- (BOOL) isInputValid {
+	BOOL output = YES;
+	NSMutableString *error_msg = [[NSMutableString alloc] initWithString:@"Error:"];
+	if (![KZUtils isEmailValid:emailIDTextfield.text]) {
+		[error_msg appendString:@"\nThe Email address is invalid"];
+		output = NO;
+	}
+	if (![KZUtils isPasswordValid:passwordTextfield.text]) {
+		[error_msg appendString:@"\nThe password is invalid; it should be at least 6 characters."];
+		output = NO;
+	}
+	if (output == NO) {
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cashbury" message:error_msg delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+		[alert show];
+		[alert release];
+	}
+	return output;
+}
+
+
+#pragma mark GO BUTTON CLICKED
+- (IBAction)clickGoButton:(id)sender {
+    
+    [self hideKeyboard];
+    self.view.frame =   CGRectMake(self.view.frame.origin.x, 0.0, self.view.frame.size.width, self.view.frame.size.height);
+
 	if (![self isInputValid]) return; 
-	[self loginWithEmail:self.txtEmail.text andPassword:self.txtPassword.text andUsername:@"" andFirstName:nil andLastName:nil andShowLoading:YES];
+    
+    /* to delete */
+    //email=100001967324196@facebook.com.fake&password=936F4395F695D85BA5CAAF62FDE27009&username=&first_name=Vijoy&last_name=Varghese
+	[self loginWithEmail:@"100001967324196@facebook.com.fake" andPassword:@"936F4395F695D85BA5CAAF62FDE27009" andUsername:@"" andFirstName:@"Vijoy" andLastName:@"Varghese" andShowLoading:YES];
 }
 
+- (IBAction) hideKeyboard {
+	[emailIDTextfield resignFirstResponder];
+	[passwordTextfield resignFirstResponder];
+}
+
+#pragma mark FORGOT PASSWORD
 - (IBAction) forgot_password {
 	[self hideKeyboard];
 	ForgotPasswordViewController *forgot_pass = [[ForgotPasswordViewController alloc] initWithNibName:@"ForgotPasswordView" bundle:nil];
 	[self presentModalViewController:forgot_pass animated:YES];
 }
 
+#pragma mark SIGN UP
 - (IBAction) signup {
 	[self hideKeyboard];
 	SignupViewController *signup = [[SignupViewController alloc] initWithNibName:@"SignupView" bundle:nil];
 	[self presentModalViewController:signup animated:YES];
 }
 
+
+/* to delete */
 - (IBAction) facebook_connect{
 	FacebookWrapper *shared = [FacebookWrapper shared];
 	[FacebookWrapper setSessionDelegate:self];
@@ -68,30 +193,32 @@
 	[shared login];
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// UIViewController
 
 
+#pragma mark VIEW CYCLES
 /**
  * Set initial view
  */
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    emailIDTextfield.delegate   =   self;
+    passwordTextfield.delegate  =   self;
     
-	[label setText:@"Please log in"];
-    
+    /* delete */
+    emailIDTextfield.text       =   @"vijoy@appsamusing.com";
+    passwordTextfield.text      =   @"quintet123$";
     self.navigationController.navigationBarHidden = YES;
 	//[fbButton updateImage];
 	
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// NSObject
 
 - (void)dealloc {
-	[label release];
 	[fbButton release];
+    [emailIDTextfield release];
+    [passwordTextfield release];
+    [goButton release];
 	[super dealloc];
 }
 
@@ -104,37 +231,21 @@
 /**
  * Called when the request logout has succeeded.
  */
+/* to delete */
 - (void)didLogout {
 	if ([[KZUserInfo shared] isLoggedIn]) {
 		[KZUserInfo shared].user_id = nil;
 		[KZUserInfo shared].auth_token = nil;
 	}
 	//if (!fbButton.isLoggedIn) {
-	[label setText:@"Logged out Successfully"];
 	fbButton.isLoggedIn         = NO;
 	//[fbButton updateImage];
 	//}
 }
 
-- (BOOL) isInputValid {
-	BOOL output = YES;
-	NSMutableString *error_msg = [[NSMutableString alloc] initWithString:@"Error:"];
-	if (![KZUtils isEmailValid:self.txtEmail.text]) {
-		[error_msg appendString:@"\nThe Email address is invalid"];
-		output = NO;
-	}
-	if (![KZUtils isPasswordValid:self.txtPassword.text]) {
-		[error_msg appendString:@"\nThe password is invalid; it should be at least 6 characters."];
-		output = NO;
-	}
-	if (output == NO) {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cashbury" message:error_msg delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-		[alert show];
-		[alert release];
-	}
-	return output;
-}
 
+
+/* to delete */
 - (void) didNotLogin {
 	[KZApplication hideLoading];
 	[[FacebookWrapper shared] logout];
@@ -142,6 +253,7 @@
 	
 }
 
+/* to delete */
 - (void) fbDidLogin {
 	[KZApplication showLoadingScreen:nil];
 	NSLog(@"Logged in to Facebook");
@@ -158,6 +270,8 @@
 	NSString *password = [KZUtils md5ForString:[NSString stringWithFormat:@"fb%@bf", _uid]];
 	[self loginWithEmail:email andPassword:password andUsername:_username andFirstName:_first_name andLastName:_last_name andShowLoading:YES];
 }
+
+#pragma mark LOGIN REQUEST
 
 - (void) loginWithEmail:(NSString*)_email andPassword:(NSString*)_password andUsername:(NSString*)_username andFirstName:(NSString*)_first_name andLastName:(NSString*)_last_name andShowLoading:(BOOL)_show_loading {	
 	NSString *url_str = [NSString stringWithFormat:@"%@/users/sign_in.xml", API_URL];
@@ -189,7 +303,6 @@
  * Called when a UIServer Dialog successfully return.
  */
 - (void)dialogDidComplete:(FBDialog *)dialog {
-	[label setText:@"publish successfully"];
 }
 
 //------------------------------------------
@@ -219,16 +332,15 @@
   //  if (theRequest == login_request)
   //  {
 	
-	CXMLDocument *_document = [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
-	CXMLElement *_error_node = [_document nodeForXPath:@"//error" error:nil];
-	NSLog([_document description]);
+	CXMLDocument *_document     =   [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
+	CXMLElement *_error_node    =   (CXMLElement*)[_document nodeForXPath:@"//error" error:nil];
 	if (_error_node != nil) { 
-		[KZUserInfo clearPersistedData];
+		[[KZUserInfo shared] clearPersistedData];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cashbury" message:[_error_node stringValue] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 		[alert show];
 		[alert release];
 	} else {
-        CXMLElement *_node = [_document nodeForXPath:@"//user" error:nil];
+        CXMLElement *_node = (CXMLElement*)[_document nodeForXPath:@"//user" error:nil];
         
         // Escape the image URL
         NSString *_imageURLString = [[_node stringFromChildNamed:@"brand-image-url"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -244,22 +356,48 @@
 		[KZUserInfo shared].last_name = [_node stringFromChildNamed:@"last-name"];
 		[KZUserInfo shared].auth_token = [_node stringFromChildNamed:@"authentication-token"];
 		if ([[KZUserInfo shared] isLoggedIn]) {
-			//UIWindow *window = [[[KZApplication getAppDelegate] window] retain];
-			//UINavigationController *navigationController = [KZApplication getAppDelegate].navigationController;
-			/////////////////FIXTHIS
-			//KZPlacesViewController *view_controller = [[KZPlacesViewController alloc] initWithNibName:@"KZPlacesView" bundle:nil];			
-			
+            
+            /*
+            CWRingUpViewController *ringerController    =   [[CWRingUpViewController alloc] initWithBusinessId:[KZUserInfo shared].cashier_business.identifier];
+            [[KZApplication getAppDelegate].navigationController pushViewController:ringerController animated:NO];
+            //[ringerController release];*/
+            
+            
+            CWRingUpViewController  *ringerController      =    [[CWRingUpViewController alloc] initWithBusinessId:[KZUserInfo shared].cashier_business.identifier];
+            CGRect fRect                    =   ringerController.view.frame;
+            fRect.origin.y                  +=  20;
+            ringerController.view.frame     =   fRect;
+            
+            [UIView beginAnimations:nil context:nil];
+            [UIView setAnimationDuration:0.5];
+            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[KZApplication getAppDelegate].window cache:NO];
+            
+            [[KZApplication getAppDelegate].window addSubview:ringerController.view];
+            [UIView commitAnimations];
+            //vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+            //[self presentModalViewController:vc animated:YES];
+            [KZApplication getAppDelegate].ringup_vc = ringerController;
+            [ringerController release];
+				
+            /* to delete
 			KZCardsAtPlacesViewController *_cardsViewController = [[KZCardsAtPlacesViewController alloc] initWithNibName:@"KZCardsAtPlaces" bundle:nil];
             [[KZApplication getAppDelegate].navigationController pushViewController:_cardsViewController animated:NO];
-			//[window addSubview:[KZApplication getAppDelegate].leather_curtain];
+             */
 			
-			//[window addSubview:navigationController.view];
-			//[navigationController pushViewController:view_controller animated:YES];
-			//[window release];
-			
+            
+            
 		}
 	}	
 }
 
 
+- (void)viewDidUnload {
+    [emailIDTextfield release];
+    emailIDTextfield = nil;
+    [passwordTextfield release];
+    passwordTextfield = nil;
+    [goButton release];
+    goButton = nil;
+    [super viewDidUnload];
+}
 @end

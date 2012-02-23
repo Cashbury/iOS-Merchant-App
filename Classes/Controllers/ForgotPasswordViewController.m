@@ -121,7 +121,7 @@
 		CXMLElement *_node = [_document nodeForXPath:@"//user" error:nil];
 		NSString *email = [_node stringFromChildNamed:@"email"];
 		[self dismissModalViewControllerAnimated:YES];
-		[[KZApplication getAppDelegate].loginViewController.txtEmail setText:email];
+		[[KZApplication getAppDelegate].loginViewController.emailIDTextfield setText:email];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Thank you" message:@"An email has been sent to you to reset your password." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 		[alert show];
 		[alert release];
