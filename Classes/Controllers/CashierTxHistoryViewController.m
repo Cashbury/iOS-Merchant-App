@@ -113,6 +113,7 @@
     if (cell == nil)
     {
         cell = [[NSBundle mainBundle] loadObjectFromNibNamed:@"CashierTxReceiptHistoryCell" class:[CashierTxReceiptHistoryCell class] owner:nil options:nil];
+        cell.selectionStyle         =   UITableViewCellSelectionStyleNone;
         
     }
     if (indexPath.row == 2) {
@@ -308,6 +309,7 @@
 
 
 - (IBAction) goBackToSettings:(id)sender {
+    /*
 	[UIView beginAnimations:nil context:nil];
 	[UIView setAnimationDuration:0.5];
 	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:self.view.superview cache:NO];	
@@ -315,7 +317,7 @@
 	NSArray* views = [KZApplication getAppDelegate].window.subviews;
 	UIView* top_view = (UIView*)[views objectAtIndex:[views count]-1];
 	[top_view removeFromSuperview];
-	[UIView commitAnimations];
+	[UIView commitAnimations];*/
 }
 
 - (float) getDayReceiptsSum:(NSArray*)_receipts {

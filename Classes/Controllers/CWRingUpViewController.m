@@ -6,6 +6,7 @@
 //  Copyright 2011 Cashbury. All rights reserved.
 //
 
+#define CASHBURY_SCAN_QRCODE_IDENTIFICATION @"c$::"
 #import "CWRingUpViewController.h"
 #import "QuartzCore/QuartzCore.h"
 #import "KZUserInfo.h"
@@ -384,39 +385,60 @@
 }
 
 - (void) didSnapCode:(NSString*)_code {
-	[zxing_vc dismissModalViewControllerAnimated:NO];
-	[zxing_vc release];
-	current_camera_screen_num = 0;
-	float amount = [[str substringWithRange:NSMakeRange(1, [str length]-1)] floatValue];
-
-	NSMutableString* params = [[NSMutableString alloc] init];
-	[params appendFormat:@"auth_token=%@", [KZUserInfo shared].auth_token];
-	[params appendFormat:@"&amount=%1.2f", amount];
-	[params appendFormat:@"&customer_identifier=%@", _code];
-	[params appendFormat:@"&long=%@", [LocationHelper getLongitude]];
-	[params appendFormat:@"&lat=%@", [LocationHelper getLatitude]];
-	
-	NSArray* arr_engagements_ids = [self.selected_items_and_quantities allKeys];
-	for (NSString* engagement_id in arr_engagements_ids) {
-		NSString* quantity = (NSString*)[self.selected_items_and_quantities objectForKey:engagement_id];
-		[params appendFormat:@"&engagements[]=%@,%@", engagement_id, quantity];
-		
-	}
-	
-	NSLog(params);
-	
-	NSMutableDictionary *_headers = [[NSMutableDictionary alloc] init];
-	[_headers setValue:@"application/xml" forKey:@"Accept"];
+    /* to delete */
+    /* For testing , once the format is correct, delete this */
+    NSString *QRcodeString  =   [NSString stringWithFormat:@"c$::%@ t:15%%",_code];
+    /* delete till here */
     
-    NSString *_formattedEndpoint = (self.action == CWRingUpViewControllerActionCharge) ? @"%@/users/cashiers/charge_customer.xml" : @"%@/users/cashiers/load_money.xml";
-    
-	ringup_req = [[KZURLRequest alloc] initRequestWithString:[NSString stringWithFormat:_formattedEndpoint, API_URL] 
-												   andParams:params 
-													delegate:self 
-													 headers:_headers 
-										   andLoadingMessage:@"Sending..."];
-    
-	[params release];
+    if ([_code hasPrefix:CASHBURY_SCAN_QRCODE_IDENTIFICATION]) {// QR code is correct
+        
+        [zxing_vc dismissModalViewControllerAnimated:NO];
+        [zxing_vc release];
+        current_camera_screen_num   =   0;
+        float amount                =   [[str substringWithRange:NSMakeRange(1, [str length]-1)] floatValue];
+        NSArray *tipsArray          =   [QRcodeString componentsSeparatedByString:@"t:"];
+        NSString *tipsString        =   @"";
+        if ([tipsArray count] >= 2) {
+            // There is tips added
+            tipsString              =   (NSString*)[tipsArray objectAtIndex:1];
+        }
+        
+        
+        NSMutableString* params     =   [[NSMutableString alloc] init];
+        [params appendFormat:@"auth_token=%@", [KZUserInfo shared].auth_token];
+        [params appendFormat:@"&amount=%1.2f", amount];
+        [params appendFormat:@"$tip=%@", tipsString];
+        [params appendFormat:@"&customer_identifier=%@", _code];
+        [params appendFormat:@"&long=%@", [LocationHelper getLongitude]];
+        [params appendFormat:@"&lat=%@", [LocationHelper getLatitude]];
+        
+        NSArray* arr_engagements_ids    =   [self.selected_items_and_quantities allKeys];
+        for (NSString* engagement_id in arr_engagements_ids) {
+            NSString* quantity = (NSString*)[self.selected_items_and_quantities objectForKey:engagement_id];
+            [params appendFormat:@"&engagements[]=%@,%@", engagement_id, quantity];
+            
+        }
+        
+        NSMutableDictionary *_headers   =   [[NSMutableDictionary alloc] init];
+        [_headers setValue:@"application/xml" forKey:@"Accept"];
+        
+        NSString *_formattedEndpoint    =   (self.action == CWRingUpViewControllerActionCharge) ? @"%@/users/cashiers/charge_customer.xml" : @"%@/users/cashiers/load_money.xml";
+        
+        ringup_req = [[KZURLRequest alloc] initRequestWithString:[NSString stringWithFormat:_formattedEndpoint, API_URL] 
+                                                       andParams:params 
+                                                        delegate:self 
+                                                         headers:_headers 
+                                               andLoadingMessage:@"Sending..."];
+        
+        [params release];
+        
+    }else{// QR code is wrong
+        
+        UIAlertView *alertView          =   [[UIAlertView alloc]initWithTitle:@"Message" message:@"Scanned QR code is not valid" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        [alertView show];
+        [alertView release];
+        
+    }
 }
 
 - (void) didCancelledSnapping {
