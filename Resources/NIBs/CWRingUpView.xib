@@ -138,11 +138,9 @@
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 			<object class="IBUILabel" id="750136925">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<string key="NSFrameSize">{78, 21}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<bool key="IBUIOpaque">NO</bool>
 				<bool key="IBUIClipsSubviews">YES</bool>
 				<int key="IBUIContentMode">7</int>
@@ -1723,6 +1721,7 @@
 					<string>18.IBPluginDependency</string>
 					<string>19.IBPluginDependency</string>
 					<string>3.IBPluginDependency</string>
+					<string>3.IBUIButtonInspectorSelectedStateConfigurationMetadataKey</string>
 					<string>34.IBPluginDependency</string>
 					<string>38.IBPluginDependency</string>
 					<string>51.IBPluginDependency</string>
@@ -1776,6 +1775,7 @@
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -2144,8 +2144,8 @@
 				<string>{320, 205}</string>
 				<string>{108, 54}</string>
 				<string>{30, 30}</string>
-				<string>{37, 19}</string>
-				<string>{37, 19}</string>
+				<string>{31, 19}</string>
+				<string>{31, 19}</string>
 				<string>{30, 30}</string>
 				<string>{320, 461}</string>
 				<string>{320, 47}</string>
