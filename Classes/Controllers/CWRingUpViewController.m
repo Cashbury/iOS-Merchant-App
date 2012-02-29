@@ -384,11 +384,6 @@
 }
 
 - (void) didSnapCode:(NSString*)_code {
-    /* to delete */
-    /* For testing , once the format is correct, delete this */
-    NSString *QRcodeString  =   [NSString stringWithFormat:@"c$::%@ t:15%%",_code];
-    _code                   =   QRcodeString;
-    /* delete till here */
     
     if ([_code hasPrefix:CASHBURY_SCAN_QRCODE_IDENTIFICATION]) {// QR code is correct
         
@@ -403,17 +398,20 @@
         NSArray *codeArray          =  [_code componentsSeparatedByString:CASHBURY_SCAN_QRCODE_IDENTIFICATION];
         
         //get code and tip
-        NSString *codeTipString     =   [codeArray objectAtIndex:0];
-        NSArray *tipsArray          =   [codeTipString componentsSeparatedByString:@"t:"];
         NSString *tipsString        =   @"";
         NSString *codeString        =   @"";
-        if ([tipsArray count] > 0) {
-            codeString              =   [(NSString*)[tipsArray objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            if ([tipsArray count] > 1) {
-                tipsString          =   (NSString*)[tipsArray objectAtIndex:1];
+        
+        if ([codeArray count] > 0) {
+            NSString *codeTipString     =   [codeArray lastObject];
+            NSArray *tipsArray          =   [codeTipString componentsSeparatedByString:@"t:"];
+            if ([tipsArray count] > 0) {
+                codeString              =   [(NSString*)[tipsArray objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                if ([tipsArray count] > 1) {
+                    tipsString          =   (NSString*)[tipsArray objectAtIndex:1];
+                }
             }
         }
-        
+
         
         NSMutableString* params     =   [[NSMutableString alloc] init];
         [params appendFormat:@"auth_token=%@", [KZUserInfo shared].auth_token];
@@ -474,6 +472,8 @@
 }
 
 - (void) KZURLRequest:(KZURLRequest *)theRequest didSucceedWithData:(NSData*)theData {
+    NSString *testString            =   [[NSString alloc]initWithData:theData encoding:NSASCIIStringEncoding];
+    NSLog(@"Test %@",testString);
 	@try {	
 		CXMLDocument *_document     =   [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
 		CXMLElement* _node          =   (CXMLElement*)[_document nodeForXPath:@"/hash" error:nil];
