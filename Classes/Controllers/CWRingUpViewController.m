@@ -6,7 +6,7 @@
 //  Copyright 2011 Cashbury. All rights reserved.
 //
 
-#define CASHBURY_SCAN_QRCODE_IDENTIFICATION @"c$::"
+#define CASHBURY_SCAN_QRCODE_IDENTIFICATION @"C$::"
 #import "CWRingUpViewController.h"
 #import "QuartzCore/QuartzCore.h"
 #import "KZUserInfo.h"
