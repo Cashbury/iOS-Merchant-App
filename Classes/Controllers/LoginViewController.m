@@ -15,6 +15,7 @@
 #import "ForgotPasswordViewController.h"
 #import "SignupViewController.h"
 #import "KZCardsAtPlacesViewController.h"
+#import "LockScreenController.h"
 
 
 @implementation LoginViewController
@@ -312,7 +313,7 @@
 
 - (void) KZURLRequest:(KZURLRequest *)theRequest didFailWithError:(NSError*)theError {
 	[[KZUserInfo shared] clearPersistedData];
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cashbury" message:@"Sorry an error has occured please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cashbury" message:[theError debugDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 	[alert show];
 	[alert release];
 }
@@ -362,30 +363,29 @@
             [[KZApplication getAppDelegate].navigationController pushViewController:ringerController animated:NO];
             //[ringerController release];*/
             
-            
-            CWRingUpViewController  *ringerController      =    [[CWRingUpViewController alloc] initWithBusinessId:[KZUserInfo shared].cashier_business.identifier];
-            CGRect fRect                    =   ringerController.view.frame;
-            fRect.origin.y                  +=  20;
-            ringerController.view.frame     =   fRect;
-            
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:0.5];
-            [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[KZApplication getAppDelegate].window cache:NO];
-            
-            [[KZApplication getAppDelegate].window addSubview:ringerController.view];
-            [UIView commitAnimations];
-            //vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-            //[self presentModalViewController:vc animated:YES];
-            [KZApplication getAppDelegate].ringup_vc = ringerController;
-            [ringerController release];
-				
-            /* to delete
-			KZCardsAtPlacesViewController *_cardsViewController = [[KZCardsAtPlacesViewController alloc] initWithNibName:@"KZCardsAtPlaces" bundle:nil];
-            [[KZApplication getAppDelegate].navigationController pushViewController:_cardsViewController animated:NO];
-             */
-			
-            
-            
+            if ([[KZUserInfo shared] hasPincode]) {
+                LockScreenController *lockController            =   [[LockScreenController alloc] initWithTag:TAG_LOCK_STARTVIEW];
+                [UIView beginAnimations:nil context:nil];
+                [UIView setAnimationDuration:0.5];
+                [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[KZApplication getAppDelegate].window cache:NO];
+                [[KZApplication getAppDelegate].window addSubview:lockController.view];
+                [UIView commitAnimations];
+            }else{
+                CWRingUpViewController  *ringerController      =    [[CWRingUpViewController alloc] initWithBusinessId:[KZUserInfo shared].cashier_business.identifier];
+                CGRect fRect                    =   ringerController.view.frame;
+                fRect.origin.y                  +=  20;
+                ringerController.view.frame     =   fRect;
+                
+                [UIView beginAnimations:nil context:nil];
+                [UIView setAnimationDuration:0.5];
+                [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[KZApplication getAppDelegate].window cache:NO];
+                [[KZApplication getAppDelegate].window addSubview:ringerController.view];
+                [UIView commitAnimations];
+                [KZApplication getAppDelegate].ringup_vc = ringerController;
+                [ringerController release];
+
+            }
+            				
 		}
 	}	
 }

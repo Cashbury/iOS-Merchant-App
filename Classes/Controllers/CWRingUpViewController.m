@@ -18,6 +18,7 @@
 #import "CashierTxHistoryViewController.h"
 #import "KZReceiptHistory.h"
 #import "UIButton+Helper.h"
+#import "LockScreenController.h"
 
 @interface CWRingUpViewController (Private)
 	- (void) keyTouched:(NSString*)string;
@@ -400,26 +401,36 @@
         //get code and tip
         NSString *tipsString        =   @"";
         NSString *codeString        =   @"";
+        NSString *tipType           =   @"amount";
         
         if ([codeArray count] > 0) {
             NSString *codeTipString     =   [codeArray lastObject];
             NSArray *tipsArray          =   [codeTipString componentsSeparatedByString:@"t:"];
             if ([tipsArray count] > 0) {
+                
                 codeString              =   [(NSString*)[tipsArray objectAtIndex:0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
                 if ([tipsArray count] > 1) {
                     tipsString          =   (NSString*)[tipsArray objectAtIndex:1];
+                    if ([tipsString hasSuffix:@"%"]) {
+                        tipsString      =   [tipsString stringByReplacingOccurrencesOfString:@"%" withString:@""];
+                        tipType         =   @"percentage";
+                    }
                 }
             }
         }
-
+        
         
         NSMutableString* params     =   [[NSMutableString alloc] init];
         [params appendFormat:@"auth_token=%@", [KZUserInfo shared].auth_token];
         [params appendFormat:@"&amount=%1.2f", amount];
-        [params appendFormat:@"$tip=%@", tipsString];
-        [params appendFormat:@"&customer_identifier=%@", codeString];
+        [params appendFormat:@"&customer_identifier=C$::%@", codeString];
         [params appendFormat:@"&long=%@", [LocationHelper getLongitude]];
         [params appendFormat:@"&lat=%@", [LocationHelper getLatitude]];
+        [params appendFormat:@"&tip-amount=%1.1f", [tipsString floatValue]];
+        [params appendFormat:@"&tip-type=%@",tipType];
+        
+        
+        
         
         NSArray* arr_engagements_ids    =   [self.selected_items_and_quantities allKeys];
         for (NSString* engagement_id in arr_engagements_ids) {
@@ -440,6 +451,9 @@
                                                andLoadingMessage:@"Sending..."];
         
         [params release];
+        [_headers release];
+        
+        NSLog(@"Req %@",ringup_req);
         
     }else{// QR code is wrong
         
@@ -449,6 +463,7 @@
         
     }
 }
+
 
 - (void) didCancelledSnapping {
 	[zxing_vc dismissModalViewControllerAnimated:NO];
@@ -510,6 +525,16 @@
 	[UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:self.view.superview cache:NO];	
 	[self.view removeFromSuperview];
 	[UIView commitAnimations];*/
+    LockScreenController *lockController    =   [[LockScreenController alloc]initWithTag:TAG_LOCK_FROM_RINGERVIEW];
+    
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[KZApplication getAppDelegate].window cache:NO];
+    
+    [[KZApplication getAppDelegate].window addSubview:lockController.view];
+    [UIView commitAnimations];
+    
+    
 }
 
 - (IBAction) scan_toggle {

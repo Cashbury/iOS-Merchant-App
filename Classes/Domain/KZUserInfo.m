@@ -25,7 +25,8 @@ static KZUserInfo* shared = nil;
 			current_profile,
 			currency_code,
 			flag_url,
-            facebookID;
+            facebookID,
+            pincode;
 
 + (KZUserInfo*) shared {
 	if (shared == nil) {
@@ -47,7 +48,7 @@ static KZUserInfo* shared = nil;
 
 
 - (void) persistData {
-	NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+	NSUserDefaults *prefs   =   [NSUserDefaults standardUserDefaults];
 	[prefs setObject:self.email forKey:@"login_email"];
 	[prefs setObject:self.password forKey:@"login_password"];
 	if (self.first_name != nil) [prefs setObject:self.first_name forKey:@"login_first_name"];
@@ -62,38 +63,49 @@ static KZUserInfo* shared = nil;
 	[prefs setBool:self.is_logged_in forKey:@"login_is_logged_in"];
     [prefs setObject:self.facebookID forKey:@"facebook_id"];
     
+    [prefs setObject:self.pincode forKey:@"pinCode"];
+    
 	[prefs synchronize];
 }
 
 - (void) wakeup {
-	NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-	self.email = [prefs stringForKey:@"login_email"];
-	self.password = [prefs stringForKey:@"login_password"];
-	self.first_name = [prefs stringForKey:@"login_first_name"];
-	self.last_name = [prefs stringForKey:@"login_last_name"];
-	self.is_logged_in = [prefs boolForKey:@"login_is_logged_in"];
-	self.facebook_username = [prefs stringForKey:@"login_facebook_username"];
-	self.current_profile = [prefs stringForKey:@"current_profile"];
-	self.currency_code = [prefs stringForKey:@"currency_code"];
-	self.flag_url = [prefs stringForKey:@"flag_url"];
-    self.facebookID = [prefs stringForKey:@"facebook_id"];
+	NSUserDefaults *prefs   =   [NSUserDefaults standardUserDefaults];
+	self.email              =   [prefs stringForKey:@"login_email"];
+	self.password           =   [prefs stringForKey:@"login_password"];
+	self.first_name         =   [prefs stringForKey:@"login_first_name"];
+	self.last_name          =   [prefs stringForKey:@"login_last_name"];
+	self.is_logged_in       =   [prefs boolForKey:@"login_is_logged_in"];
+	self.facebook_username  =   [prefs stringForKey:@"login_facebook_username"];
+	self.current_profile    =   [prefs stringForKey:@"current_profile"];
+	self.currency_code      =   [prefs stringForKey:@"currency_code"];
+	self.flag_url           =   [prefs stringForKey:@"flag_url"];
+    self.facebookID         =   [prefs stringForKey:@"facebook_id"];
+    self.pincode            =   [prefs stringForKey:@"pinCode"];
 	if (self.current_profile == nil) self.current_profile = @"life";
 }
 
 - (void) clearPersistedData {
-	self.email = @"";
-	self.password = @"";
-	self.first_name = @"";
-	self.last_name = @"";
-	self.facebook_username = @"";
-	self.is_logged_in = NO;
-	self.current_profile = @"life";
-    self.facebookID = @"";
-	self.currency_code = nil;
-	self.flag_url = nil;
+	self.email              =   @"";
+	self.password           =   @"";
+	self.first_name         =   @"";
+	self.last_name          =   @"";
+	self.facebook_username  =   @"";
+	self.is_logged_in       =   NO;
+	self.current_profile    =   @"life";
+    self.facebookID         =   @"";
+	self.currency_code      =   nil;
+	self.flag_url           =   nil;
+    self.pincode            =   @"";
 	
 	[self persistData];
 	
+}
+
+-(BOOL)hasPincode{
+    if ([self.pincode length] > 0) {
+        return TRUE;
+    }
+    return FALSE;
 }
 
 - (BOOL) isCredentialsPersistsed {

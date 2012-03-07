@@ -6,6 +6,9 @@
 //  Copyright 2011 Cashbury. All rights reserved.
 //
 
+#define TAG_LOCK_FROM_RINGERVIEW    10
+#define TAG_LOCK_STARTVIEW          20
+
 #import <Foundation/Foundation.h>
 #import "KZBusiness.h"
 
@@ -27,6 +30,7 @@
 @property (nonatomic, retain) NSString* flag_url;
 
 @property (nonatomic, retain) NSString *facebookID;
+@property (nonatomic, assign) NSString *pincode;
 
 + (KZUserInfo*) shared;
 
@@ -40,6 +44,8 @@
 - (void) clearPersistedData;
 
 - (NSString*) getFullName;
+
+-(BOOL)hasPincode;
 
 // Returns the full first name and an abbreviated last name
 - (NSString*) getShortName;

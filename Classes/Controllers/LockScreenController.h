@@ -8,11 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LockScreenController : UIViewController{
-    IBOutlet UITextField *pincodeTextField;
+@interface LockScreenController : UIViewController<UITextFieldDelegate>{
+ 
+    IBOutlet UITextField *firstDigitTxtField;
+    IBOutlet UITextField *secondDigitTxtField;
+    IBOutlet UITextField *thirdDigitTxtField;
+    IBOutlet UITextField *fourthDigitTxtField;
+    IBOutlet UILabel *messageLabel;
     
-    IBOutlet UIButton *lockButton;
+    NSString *pincodeString;
+    NSInteger tag;
 }
-- (IBAction)clickLockButton:(id)sender;
 
+@property (retain, nonatomic) IBOutlet UIButton *cancelButton;
+- (IBAction)cancelButtonClicked:(id)sender;
+-(id)initWithTag:(NSInteger)viewTag;
 @end
