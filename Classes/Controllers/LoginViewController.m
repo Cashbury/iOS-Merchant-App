@@ -350,6 +350,8 @@
         
 		[KZUserInfo shared].user_id = [_node stringFromChildNamed:@"id"];
 		[KZUserInfo shared].currency_code = [_node stringFromChildNamed:@"currency-code"];
+        [KZUserInfo shared].currency_symbol =   [_node stringFromChildNamed:@"currency-symbol"];
+        NSLog(@"symbol %@",[KZUserInfo shared].currency_symbol);
 		[KZUserInfo shared].flag_url = [_node stringFromChildNamed:@"flag-url"];
 		[KZUserInfo shared].cashier_business = [KZBusiness getBusinessWithIdentifier:[_node stringFromChildNamed:@"business-id"] 
 																			 andName:[_node stringFromChildNamed:@"brand-name"] 

@@ -163,9 +163,10 @@
 		[str deleteCharactersInRange:NSMakeRange(0, [str length])];
 	}
 	
-	
+	 NSLog(@"symbol %@",[KZUserInfo shared].currency_symbol);
 	if ([text_field_text length] < 3) {
-		[str appendString:@"$0."];	//$
+        NSString *appString =   [NSString stringWithFormat:@"%@0.",[KZUserInfo shared].currency_symbol];
+		[str appendString:appString];	//$
 		for (NSUInteger i = [text_field_text length]; i < 2; i++) {
 			[str appendString:@"0"];
 		}
@@ -174,7 +175,7 @@
 	} else {
 		NSRange starting = NSMakeRange(0, [text_field_text length]-2);
 		NSRange last_2 = NSMakeRange([text_field_text length]-2, 2);
-		[str appendString:@"$"];
+		[str appendString:[KZUserInfo shared].currency_symbol];
 		[str appendString:[text_field_text substringWithRange:starting]];
 		[str appendString:@"."];
 		[str appendString:[text_field_text substringWithRange:last_2]];
@@ -340,7 +341,7 @@
 
 - (IBAction) clearItemsAction {
 	[text_field_text setString:@""];
-	self.lbl_amount.text = @"$0.00";	//$
+	self.lbl_amount.text = [NSString stringWithFormat:@"%@0.00",[KZUserInfo shared].currency_symbol];	//$
 
 	self.current_item = nil;
 	[self.selected_items_and_quantities removeAllObjects];

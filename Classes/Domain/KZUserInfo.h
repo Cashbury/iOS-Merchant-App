@@ -31,6 +31,7 @@
 
 @property (nonatomic, retain) NSString *facebookID;
 @property (nonatomic, assign) NSString *pincode;
+@property (nonatomic, retain) NSString *currency_symbol;
 
 + (KZUserInfo*) shared;
 
