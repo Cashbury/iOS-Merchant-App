@@ -161,9 +161,7 @@
 
 	if (![self isInputValid]) return; 
     
-    /* to delete */
-    //email=100001967324196@facebook.com.fake&password=936F4395F695D85BA5CAAF62FDE27009&username=&first_name=Vijoy&last_name=Varghese
-	[self loginWithEmail:@"100001967324196@facebook.com.fake" andPassword:@"936F4395F695D85BA5CAAF62FDE27009" andUsername:@"" andFirstName:@"Vijoy" andLastName:@"Varghese" andShowLoading:YES];
+    [self loginWithEmail:emailIDTextfield.text andPassword:passwordTextfield.text andUsername:@"" andFirstName:@"" andLastName:@"" andShowLoading:TRUE];
 }
 
 - (IBAction) hideKeyboard {
@@ -207,8 +205,8 @@
     passwordTextfield.delegate  =   self;
     
     /* delete */
-    emailIDTextfield.text       =   @"vijoy@appsamusing.com";
-    passwordTextfield.text      =   @"quintet123$";
+    emailIDTextfield.text       =   @"h1@gotmazuma.com";
+    passwordTextfield.text      =   @"Ca$hier";
     self.navigationController.navigationBarHidden = YES;
 	//[fbButton updateImage];
 	
@@ -277,7 +275,8 @@
 - (void) loginWithEmail:(NSString*)_email andPassword:(NSString*)_password andUsername:(NSString*)_username andFirstName:(NSString*)_first_name andLastName:(NSString*)_last_name andShowLoading:(BOOL)_show_loading {	
 	NSString *url_str = [NSString stringWithFormat:@"%@/users/sign_in.xml", API_URL];
 	NSString *params = [NSString stringWithFormat:@"email=%@&password=%@&username=%@&first_name=%@&last_name=%@", _email, _password, _username, _first_name, _last_name];
-	
+    
+    
 	NSMutableDictionary *_headers = [[NSMutableDictionary alloc] init];
 	
 	[_headers setValue:@"application/xml" forKey:@"Accept"];
@@ -332,6 +331,9 @@
 	 */
   //  if (theRequest == login_request)
   //  {
+    
+    NSString *tempString    =   [[NSString alloc] initWithData:theData encoding:NSASCIIStringEncoding];
+    NSLog(@"string %@",tempString);
 	
 	CXMLDocument *_document     =   [[[CXMLDocument alloc] initWithData:theData options:0 error:nil] autorelease];
 	CXMLElement *_error_node    =   (CXMLElement*)[_document nodeForXPath:@"//error" error:nil];
